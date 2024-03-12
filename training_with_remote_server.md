@@ -74,3 +74,15 @@ Endpoint = 47.94.191.124:59873
 ```
 
 If you need more connection, contact [Bolun](mailto:Bolun.Han@outlook.com)
+
+# Training Server Access
+
+After you connect the WireGuard Tunnel, you can task the server using SSH or RDP
+
+For SSH access
+
+```bash
+sshpass -p 348995 ssh bolun@10.8.0.2
+```
+
+For RDP access: use any remote desktop client to connect to `10.8.0.2`, with same user `bolun` and pwd `348995`

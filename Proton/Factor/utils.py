@@ -40,14 +40,18 @@ class IndexWeight(IndexWeightBase):
         selected_pred = np.array([pred_value[ticker] for ticker in selected_ticker])
 
         if mode == 'pearson':
-            corr = np.corrcoef(selected_factor, selected_pred)
-            ic = corr[0, 1]
+            covariance_matrix = np.cov(selected_factor, selected_pred)
         elif mode == 'spearman':
-            corr = np.corrcoef(rankdata(selected_factor), rankdata(selected_pred))
-            ic = corr[0, 1]
+            covariance_matrix = np.cov(rankdata(selected_factor), rankdata(selected_pred))
         else:
             raise NotImplementedError(f'Invalid mode {mode}, expect "spearman" or "pearson".')
 
+        variance, covariance = covariance_matrix[0]
+
+        if not variance or not np.isfinite(variance):
+            return np.nan
+
+        ic = covariance / variance
         return ic
 
     def ic(self, factor_value: dict[str, float], pred_value: dict[str, float]) -> float:
@@ -98,6 +102,14 @@ class FactorMonitor(FactorMonitorBase, metaclass=abc.ABCMeta):
 
 
 class FixedIntervalCompressor(object, metaclass=abc.ABCMeta):
+    """
+    Designed for dimension compression.
+
+    The Compressor samples the factor value by a given fixed interval, collects a / several vectors of factor value.
+    And calculate a compressed value for each vector.
+
+    Used for low-frequency transforming of HFT factors.
+    """
     class Compressor(deque):
         def __init__(self, name: str, size: int, *args, **kwargs):
             self.name = name

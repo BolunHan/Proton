@@ -23,14 +23,14 @@ def get_version(rel_path):
 long_description = read("README.md")
 
 setuptools.setup(
-    name="Quark",
-    version=get_version(os.path.join('Quark', '__init__.py')),
+    name="Proton",
+    version=get_version(os.path.join('Proton', '__init__.py')),
     author="Bolun.Han",
     author_email="Bolun.Han@outlook.com",
     description="HFT Factor Mining Platform",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/BolunHan/Quark",
+    url="https://github.com/BolunHan/Proton",
     packages=setuptools.find_packages(),
     include_package_data=True,
     package_data={

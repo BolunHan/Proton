@@ -3,9 +3,9 @@ Medium and Low Frequency Factor Mining Platform
 
 # Roadmap
 
-- [x] Base Platform S[Kernel](Proton%2FCalibration%2FKernel)upport
+- [x] Base Platform Support
 - [ ] Custom MarketDataMonitor, Cache, Trigger(Timer)
-- [ ] Metrics (for Stock Selection)
+- [x] Metrics (for Stock Selection)
 - [ ] Backtest, DataVisualization
 - [ ] CrossValidation and Calibration (linear)
 - [ ] Factor Ensemble and Factor Pool

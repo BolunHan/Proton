@@ -1,24 +1,14 @@
 from __future__ import annotations
 
 import abc
-import enum
 import json
-import pickle
-import time
-import traceback
 from collections import deque
-from ctypes import c_wchar, c_bool, c_double
-from multiprocessing import RawArray, RawValue, Semaphore, Process, shared_memory, Lock
 from typing import Self, Callable
 
 import numpy as np
-import pandas as pd
-from PyQuantKit import MarketData, TickData, TradeData, TransactionData, OrderBook, BarData, OrderBookBuffer, BarDataBuffer, TickDataBuffer, TransactionDataBuffer
-from Quark.Calibration.dummies import is_market_session
-from Quark.Factor.memory_core import SyncMemoryCore, NamedVector
 from Quark.Factor.utils import FactorMonitor as FactorMonitorBase, ConcurrentMonitorManager, IndexWeight as IndexWeightBase, Synthetic, EMA, SamplerMode, FixedIntervalSampler, FixedVolumeIntervalSampler, AdaptiveVolumeIntervalSampler
 from scipy.stats import rankdata
-from . import collect_factor
+
 from .. import LOGGER
 
 ALPHA_05 = 0.9885  # alpha = 0.5 for each minute
@@ -26,6 +16,7 @@ ALPHA_02 = 0.9735  # alpha = 0.2 for each minute
 ALPHA_01 = 0.9624  # alpha = 0.1 for each minute
 ALPHA_001 = 0.9261  # alpha = 0.01 for each minute
 ALPHA_0001 = 0.8913  # alpha = 0.001 for each minute
+MONITOR_MANAGER = ConcurrentMonitorManager()
 
 
 class IndexWeight(IndexWeightBase):
@@ -110,6 +101,7 @@ class FixedIntervalCompressor(object, metaclass=abc.ABCMeta):
 
     Used for low-frequency transforming of HFT factors.
     """
+
     class Compressor(deque):
         def __init__(self, name: str, size: int, *args, **kwargs):
             self.name = name
@@ -301,7 +293,7 @@ class FixedIntervalCompressor(object, metaclass=abc.ABCMeta):
         self.compressor.clear()
 
 
-__all__ = ['FactorMonitor', 'ConcurrentMonitorManager',
+__all__ = ['FactorMonitor', 'ConcurrentMonitorManager', 'MONITOR_MANAGER',
            'EMA', 'ALPHA_05', 'ALPHA_02', 'ALPHA_01', 'ALPHA_001', 'ALPHA_0001',
            'Synthetic', 'IndexWeight',
            'SamplerMode', 'FixedIntervalSampler', 'FixedVolumeIntervalSampler', 'AdaptiveVolumeIntervalSampler',

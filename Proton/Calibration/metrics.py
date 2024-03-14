@@ -258,7 +258,6 @@ class Metrics(object):
         return cls._metric_ic_person(y_true=y_true_selected, y_val=y_val_selected)
 
     # --- metrics for portfolio building ---
-
     @classmethod
     def _metric_alpha(cls, y_true: np.ndarray, y_val: np.ndarray, quantile: float = 1., side: str = 'both', trade_cost: float = 0.) -> float:
         y_true_selected, y_val_selected, indices_selected = cls._select_quantile(y_true=y_true, y_val=y_val, quantile=quantile, side=side)

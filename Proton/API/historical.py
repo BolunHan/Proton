@@ -6,6 +6,7 @@ import os.path
 import pathlib
 import tarfile
 import time
+from typing import Iterable
 
 import numpy as np
 from PyQuantKit import TransactionSide, TradeData, TransactionData, TickData, OrderBook
@@ -19,7 +20,7 @@ TIME_ZONE = GlobalStatics.TIME_ZONE
 DEBUG_MODE = GlobalStatics.DEBUG_MODE
 
 
-def extract_archive(market_date: datetime.date, stock_pool: list[str], dtype: str = 'TradeData'):
+def extract_archive(market_date: datetime.date, stock_pool: Iterable[str], dtype: str = 'TradeData'):
     archive_path = pathlib.Path(ARCHIVE_DIR, f'{market_date:%Y-%m-%d}.tgz')
     extract_dir = pathlib.Path(DATA_DIR)
     os.makedirs(extract_dir, exist_ok=True)

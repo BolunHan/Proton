@@ -64,7 +64,7 @@ class FactorValidation(object):
         self.last_idx = 0
 
         self.model = RidgeRegression(alpha=.2, exponential_decay=0.25, fixed_decay=0.5)
-        self.cv = CrossValidation(model=self.model, folds=10, shuffle=True, strict_no_future=True)
+        self.cv = CrossValidation(model=self.model, folds=10, shuffle=True)
         self.metrics = {}
         self.validation_id = kwargs.get('validation_id', self._get_validation_id())
 

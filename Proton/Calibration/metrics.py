@@ -273,7 +273,11 @@ class Metrics(object):
 
         baseline = np.mean(y_true)  # should not use y_true_selected, this is for benchmark
         alpha = (y_true_selected - baseline)
-        portfolio_alpha = np.average(alpha, weights=weights)
+
+        if np.sum(weights):
+            portfolio_alpha = np.average(alpha, weights=weights)
+        else:
+            portfolio_alpha = np.nan
 
         return portfolio_alpha
 
@@ -293,7 +297,11 @@ class Metrics(object):
 
         baseline = np.mean(y_true)
         alpha = (y_true_selected - baseline)
-        portfolio_alpha = np.average(alpha, weights=kelly_leverage)
+
+        if np.sum(kelly_leverage):
+            portfolio_alpha = np.average(alpha, weights=kelly_leverage)
+        else:
+            portfolio_alpha = np.nan
 
         return portfolio_alpha
 

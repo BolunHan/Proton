@@ -29,22 +29,17 @@ from ..DataLore.utils import Panel
 
 cn.profile_cn_override()
 LOGGER = LOGGER.getChild('validation')
-DUMMY_WEIGHT = False
+DUMMY_WEIGHT = True
 TIME_ZONE = GlobalStatics.TIME_ZONE
 RANGE_BREAK = GlobalStatics.RANGE_BREAK
 START_DATE = datetime.date(2023, 1, 1)
 END_DATE = datetime.date(2023, 4, 1)
 MDS.monitor_manager = MONITOR_MANAGER
+INDEX_WEIGHTS = IndexWeight(index_name='000016.SH')
 
 
 class FactorValidation(object):
     def __init__(self, **kwargs):
-        """
-        Initializes the FactorValidation instance.
-
-        Args:
-            **kwargs: Additional parameters for configuration.
-        """
         # Params for replay
         self.dtype = kwargs.get('dtype', 'TradeData')
         self.start_date = kwargs.get('start_date', START_DATE)
@@ -52,7 +47,7 @@ class FactorValidation(object):
 
         # Params for index
         self.index_name = kwargs.get('index_name', '000016.SH')
-        self.index_weights = IndexWeight(index_name='000016.SH')
+        self.index_weights = INDEX_WEIGHTS
         self._update_index_weights(market_date=self.start_date)
         self.subscription = list(self.index_weights.keys())
 
@@ -63,7 +58,7 @@ class FactorValidation(object):
         self.poly_degree = kwargs.get('poly_degree', 1)
         self.pred_target = 60 * 60  # 3600 = 1hr, 7200 = 2hr, etc...
 
-        self.factor: list[FactorMonitor] = []
+        self.factor: list[FactorMonitor] = factor if isinstance(factor := kwargs.get('factor', []), list) else [factor]
         self.synthetic = SyntheticIndexMonitor(index_name=self.index_name, weights=self.index_weights, interval=self.sampling_interval)
         self.observation: dict[str, Panel] = {}
         self.last_idx = 0
@@ -102,7 +97,7 @@ class FactorValidation(object):
 
             for name, value in factor_value.items():  # type: str, float
                 if name.endswith(ticker):
-                    _factor[name.rstrip(name)] = value
+                    _factor[name.rstrip(ticker)] = value
 
             _panel.observation(
                 factor_value=_factor,
@@ -178,13 +173,15 @@ class FactorValidation(object):
         factors = []
 
         for factor in self.factor:
-            _factor = factor.__class__.__init__(**factor.params)
+            _factor = factor.__class__(**factor.params)
             factors.append(_factor)
 
         self.factor.clear()
         self.factor.extend(factors)
 
-        MDS.add_monitor(self.factor)
+        for factor in self.factor:
+            MDS.add_monitor(factor)
+
         MDS.add_monitor(self.synthetic)
 
         return self.factor
@@ -286,6 +283,14 @@ def main():
     """
     Main function to run factor validation or batch validation.
     """
+    start_date = datetime.date(2023, 1, 1)
+    end_date = datetime.date(2023, 2, 1)
+
+    from .TradeFlow.momentum import MomentumSupportMonitor
+
+    factor = MomentumSupportMonitor(sampling_interval=60, sample_size=50)
+
+    validator = FactorValidation(start_date=start_date, end_date=end_date, factor=factor)
 
     # validator = FactorValidation(
     #     start_date=datetime.date(2023, 1, 1),
@@ -308,11 +313,6 @@ def main():
     #     start_date=datetime.date(2023, 1, 1),
     #     end_date=datetime.date(2023, 2, 1)
     # )
-
-    validator = FactorValidation(
-        start_date=datetime.date(2023, 1, 1),
-        end_date=datetime.date(2023, 2, 1)
-    )
 
     # validator.factor.append(some_new_factor)
 

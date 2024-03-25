@@ -16,7 +16,7 @@ ALPHA_02 = 0.9735  # alpha = 0.2 for each minute
 ALPHA_01 = 0.9624  # alpha = 0.1 for each minute
 ALPHA_001 = 0.9261  # alpha = 0.01 for each minute
 ALPHA_0001 = 0.8913  # alpha = 0.001 for each minute
-MONITOR_MANAGER = ConcurrentMonitorManager()
+MONITOR_MANAGER = ConcurrentMonitorManager(n_worker=1)
 
 
 class IndexWeight(IndexWeightBase):

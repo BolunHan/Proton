@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 
 from . import Regression, LOGGER
-from .Boosting import Boosting
 from .Linear import LinearBootstrap, LinearRegression
 from .kelly import kelly_bootstrap
 from ..Base import GlobalStatics
@@ -62,13 +61,6 @@ class CrossValidation(object):
     def _predict(self, x):
         if isinstance(self.model, LinearBootstrap):
             y_pred, prediction_interval, resampled_deviation, *_ = self.model.predict(x=x)
-        elif isinstance(self.model, Boosting):
-            y_pred, prediction_interval, *_ = self.model.predict(x=x)
-            resampled_y = self.model.resample(x=x)
-            resampled_deviation = []
-            for _y, _y_resampled in zip(y_pred, resampled_y):
-                resampled_deviation.append(_y_resampled - _y)
-            resampled_deviation = np.array(resampled_deviation)
         else:
             raise NotImplementedError(f'Can not find validation method for {self.model.__class__}')
 
